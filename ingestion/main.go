@@ -21,11 +21,30 @@ type TrackingEvent struct {
 }
 
 // 2. Khởi tạo Kafka Writer
+// func newKafkaWriter(kafkaURL, topic string) *kafka.Writer {
+// 	return &kafka.Writer{
+// 		Addr:     kafka.TCP(kafkaURL),
+// 		Topic:    topic,
+// 		Balancer: &kafka.Hash{}, // Đảm bảo các message cùng Key (UserID) vào cùng 1 partition
+// 	}
+// }
+
 func newKafkaWriter(kafkaURL, topic string) *kafka.Writer {
 	return &kafka.Writer{
 		Addr:     kafka.TCP(kafkaURL),
 		Topic:    topic,
-		Balancer: &kafka.Hash{}, // Đảm bảo các message cùng Key (UserID) vào cùng 1 partition
+		Balancer: &kafka.Hash{},
+
+		// 1. Kích hoạt Asynchronous (Bắn và Quên)
+		// API sẽ quăng message vào RAM rồi báo OK ngay lập tức, thư viện tự gửi ngầm
+		Async: true,
+
+		// 2. Chiến thuật Xe buýt (Batching)
+		BatchSize:    10000,                 // Gom 10.000 event gửi 1 lần
+		BatchTimeout: 10 * time.Millisecond, // Hoặc đợi tối đa 10 mili-giây thì cho xe chạy
+
+		// 3. Nén dữ liệu (Tiết kiệm băng thông)
+		Compression: kafka.Snappy,
 	}
 }
 
