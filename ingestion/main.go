@@ -35,13 +35,13 @@ func newKafkaWriter(kafkaURL, topic string) *kafka.Writer {
 		Topic:    topic,
 		Balancer: &kafka.Hash{},
 
-		// 1. Kích hoạt Asynchronous (Bắn và Quên)
+		// 1. Kích hoạt Asynchronous
 		// API sẽ quăng message vào RAM rồi báo OK ngay lập tức, thư viện tự gửi ngầm
 		Async: true,
 
-		// 2. Chiến thuật Xe buýt (Batching)
+		// 2. Batching
 		BatchSize:    10000,                 // Gom 10.000 event gửi 1 lần
-		BatchTimeout: 10 * time.Millisecond, // Hoặc đợi tối đa 10 mili-giây thì cho xe chạy
+		BatchTimeout: 10 * time.Millisecond, // or đợi tối đa 10 mili-giây thì xử lý
 
 		// 3. Nén dữ liệu (Tiết kiệm băng thông)
 		Compression: kafka.Snappy,

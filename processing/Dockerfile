@@ -1,4 +1,4 @@
-# Sử dụng image Python nhẹ nhàng
+# Use python slim
 FROM python:3.11-slim
 
 # workd dir setup
