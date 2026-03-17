@@ -7,12 +7,13 @@ export const options = {
     duration: '15s',
 };
 
+const events = ["view", "click", "add_to_cart", "purchase"]
 export default function () {
     const payload = JSON.stringify({
         user_id: "user_" + Math.floor(Math.random() * 1000),
         session_id: "session_" + Math.floor(Math.random() * 1000),
         item_id: "item_abc",
-        event_type: "add_to_cart",
+        event_type: events[Math.floor(Math.random() * events.length)]
     });
 
     const params = {
